@@ -519,7 +519,7 @@ function validateStep(step) {
             }
 
             //Check if the abbreavition of the registered teams are different
-            if (homeAbbrev.toLowerCase() == visitorAbbrev.toLowerCase()) {
+            if (homeAbbrev.toLowerCase() == visitorName.toLowerCase()) {
                 alert("Les abreavions des noms des équipes ne peuvent pas être identiques.");
                 return false;
             }
@@ -530,6 +530,16 @@ function validateStep(step) {
         case 2:
             const venue = document.getElementById('setup-venue').value;
             const date = document.getElementById('setup-date').value;
+            console.log(date)
+            const givenDate = new Date(date).toISOString().split('T')[0];
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            if (givenDate < currentDate) {
+                alert("Veuillez choisir une date égale ou supérieure à la date d'aujourd'hui.");
+                return false;
+            }
+
+            console.log("Date", date)
             if (!venue || !date) {
                 alert('Veuillez remplir tous les champs (stade et date)');
                 return false;
