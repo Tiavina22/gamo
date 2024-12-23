@@ -1028,38 +1028,33 @@ img {
     image-rendering: crisp-edges;
 }
 
-/* Ajouter ces styles pour le footer */
+/* Modifier les styles du footer */
 .footer {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
     padding: 10px;
     text-align: center;
     z-index: 1000;
 }
 
 .copyright {
-    color: #888;
+    color: #666; /* Couleur plus subtile */
     font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Ajouter une ombre légère pour la lisibilité */
 }
 
 .copyright a {
     color: #4CAF50;
     text-decoration: none;
     transition: color 0.3s ease;
+    font-weight: 500; /* Rendre le lien un peu plus visible */
 }
 
 .copyright a:hover {
     color: #45a049;
     text-decoration: underline;
-}
-
-/* Ajuster le padding du body pour le footer */
-body {
-    padding-bottom: 50px;
 }
 
 /* Ajustement pour mobile */
