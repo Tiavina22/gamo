@@ -4,6 +4,7 @@ body {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
     font-family: 'Roboto', Arial, sans-serif;
     min-height: 100vh;
+    padding-bottom: 50px;
 }
 
 .scoreboard {
@@ -1025,4 +1026,49 @@ img {
     object-fit: contain;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+}
+
+/* Ajouter ces styles pour le footer */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.copyright {
+    color: #888;
+    font-size: 14px;
+}
+
+.copyright a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.copyright a:hover {
+    color: #45a049;
+    text-decoration: underline;
+}
+
+/* Ajuster le padding du body pour le footer */
+body {
+    padding-bottom: 50px;
+}
+
+/* Ajustement pour mobile */
+@media (max-width: 768px) {
+    .footer {
+        padding: 8px;
+    }
+    
+    .copyright {
+        font-size: 12px;
+    }
 } 
