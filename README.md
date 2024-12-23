@@ -86,7 +86,7 @@ GAMO est une application web de score boarding basketball.
 - Edge
 
 ## Auteurs et Contribution
-- Développé par [Votre Nom]
+- Tiavina22
 - Contributions bienvenues via Pull Requests
 
 ## Licence
@@ -97,4 +97,4 @@ Pour toute question ou suggestion : tiavinaramilison22@gmail.com
 
 ---
 
-© 2024 GAMO - Tous droits réservés 
+© 2024 GAMO
