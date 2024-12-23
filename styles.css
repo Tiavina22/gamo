@@ -954,4 +954,75 @@ button,
 
 .match-date i {
     color: #4CAF50;
+}
+
+/* Style de base pour les logos */
+.logo-upload img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Ajustements responsifs pour les logos */
+@media (max-width: 768px) {
+    .logo-upload img {
+        width: 80px;
+        height: 80px;
+        padding: 5px;
+    }
+
+    .team-logo {
+        width: 60px !important; /* Forcer la taille sur mobile */
+        height: 60px !important;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    .summary-team img {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-upload img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .team-logo {
+        width: 50px !important;
+        height: 50px !important;
+    }
+
+    .summary-team img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+}
+
+/* Assurer que les images restent dans leur conteneur */
+.logo-upload, .team-logo, .summary-team img {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Style pour le conteneur de logo */
+.logo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Optimisation des images */
+img {
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 } 
