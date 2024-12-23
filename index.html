@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Écran de configuration -->
+    <div id="setup-screen" class="setup-screen">
+        <h1 class="setup-title">Configuration du Match</h1>
+        <div class="setup-form">
+            <div class="setup-progress">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Équipes</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Match</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Vérification</div>
+                </div>
+            </div>
+
+            <!-- Étape 1: Configuration des équipes -->
+            <div class="setup-step" id="step-1">
+                <div class="setup-teams">
+                    <div class="setup-team">
+                        <h2>Équipe Domicile</h2>
+                        <div class="logo-upload">
+                            <img id="setup-home-logo" src="placeholder-logo.png" alt="Logo équipe domicile">
+                            <button class="upload-btn" onclick="setupChangeLogo('home')">
+                                <i class="fas fa-upload"></i> Choisir Logo
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <label for="setup-home-name">Nom de l'équipe</label>
+                            <input type="text" id="setup-home-name" placeholder="Ex: Lakers">
+                        </div>
+                        <div class="input-group">
+                            <label for="setup-home-abbrev">Abréviation</label>
+                            <input type="text" id="setup-home-abbrev" placeholder="LAL" maxlength="3">
+                        </div>
+                    </div>
+
+                    <div class="team-vs">VS</div>
+
+                    <div class="setup-team">
+                        <h2>Équipe Visiteur</h2>
+                        <div class="logo-upload">
+                            <img id="setup-visitor-logo" src="placeholder-logo.png" alt="Logo équipe visiteur">
+                            <button class="upload-btn" onclick="setupChangeLogo('visitor')">
+                                <i class="fas fa-upload"></i> Choisir Logo
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <label for="setup-visitor-name">Nom de l'équipe</label>
+                            <input type="text" id="setup-visitor-name" placeholder="Ex: Celtics">
+                        </div>
+                        <div class="input-group">
+                            <label for="setup-visitor-abbrev">Abréviation</label>
+                            <input type="text" id="setup-visitor-abbrev" placeholder="BOS" maxlength="3">
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-nav">
+                    <button class="next-btn" onclick="nextStep(1)">Suivant <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Étape 2: Configuration du match -->
+            <div class="setup-step hidden" id="step-2">
+                <div class="setup-match-info">
+                    <h2>Paramètres du Match</h2>
+                    <div class="input-group venue-input">
+                        <label for="setup-venue">
+                            <i class="fas fa-basketball-ball"></i>
+                            Nom du stade
+                        </label>
+                        <input type="text" id="setup-venue" placeholder="Ex: Staples Center">
+                    </div>
+                    
+                    <div class="input-group date-input">
+                        <label for="setup-date">
+                            <i class="far fa-calendar-alt"></i>
+                            Date du match
+                        </label>
+                        <input type="datetime-local" id="setup-date">
+                    </div>
+                    
+                    <div class="time-settings">
+                        <div class="input-group">
+                            <label for="setup-quarter-duration">
+                                <i class="far fa-clock"></i>
+                                Durée d'un quart-temps
+                            </label>
+                            <div class="time-input">
+                                <input type="number" id="setup-quarter-duration" value="10" min="1" max="15">
+                                <span class="time-unit">minutes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="setup-shot-clock">
+                                <i class="fas fa-stopwatch"></i>
+                                Durée de possession
+                            </label>
+                            <div class="time-input">
+                                <input type="number" id="setup-shot-clock" value="24" min="1" max="35">
+                                <span class="time-unit">secondes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-nav">
+                    <button class="back-btn" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Retour</button>
+                    <button class="next-btn" onclick="nextStep(2)">Suivant <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Étape 3: Vérification -->
+            <div class="setup-step hidden" id="step-3">
+                <h2>Vérification des Informations</h2>
+                <div class="setup-summary">
+                    <div class="summary-teams">
+                        <div class="summary-team">
+                            <img id="summary-home-logo" src="placeholder-logo.png">
+                            <div class="summary-team-info">
+                                <h3 id="summary-home-name">-</h3>
+                                <div id="summary-home-abbrev">-</div>
+                            </div>
+                        </div>
+                        <div class="summary-vs">VS</div>
+                        <div class="summary-team">
+                            <img id="summary-visitor-logo" src="placeholder-logo.png">
+                            <div class="summary-team-info">
+                                <h3 id="summary-visitor-name">-</h3>
+                                <div id="summary-visitor-abbrev">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-match">
+                        <div class="summary-item">
+                            <i class="fas fa-basketball-ball"></i>
+                            <span id="summary-venue">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="far fa-calendar-alt"></i>
+                            <span id="summary-date">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="far fa-clock"></i>
+                            <span id="summary-quarter">-</span> minutes par quart-temps
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-stopwatch"></i>
+                            <span id="summary-shot-clock">-</span> secondes de possession
+                        </div>
+                    </div>
+                </div>
+                <div class="setup-nav">
+                    <button class="back-btn" onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Retour</button>
+                    <button class="start-match-btn" onclick="startMatch()">
+                        <i class="fas fa-play"></i> Débuter le Match
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran du match (initialement caché) -->
+    <div id="match-screen" class="match-screen hidden">
+        <div class="scoreboard">
+            <!-- Contenu existant du scoreboard -->
+            <div class="team team-home">
+                <img id="home-logo" class="team-logo" src="placeholder-logo.png" alt="Logo équipe domicile">
+                <div class="team-info">
+                    <input type="text" id="home-name" class="team-name" readonly>
+                    <div class="team-abbrev" id="home-abbrev"></div>
+                </div>
+                <div class="score" id="home-score">0</div>
+                <div class="score-controls">
+                    <button onclick="updateScore('home', 1)">+1</button>
+                    <button onclick="updateScore('home', 2)">+2</button>
+                    <button onclick="updateScore('home', 3)">+3</button>
+                    <button onclick="updateScore('home', -1)">-1</button>
+                </div>
+                <div class="team-stats">
+                    <div class="shot-clock-container">
+                        <div class="shot-clock" id="home-shot-clock">24</div>
+                        <button onclick="toggleShotClock('home')" class="shot-clock-btn" id="home-shot-clock-btn">▶</button>
+                        <button onclick="resetShotClock('home')" class="shot-clock-reset">↺</button>
+                    </div>
+                    <div class="turnovers">
+                        <span>Ballons Perdus:</span>
+                        <div class="turnover-controls">
+                            <span id="home-turnovers">0</span>
+                            <button onclick="updateTurnovers('home', 1)">+</button>
+                            <button onclick="updateTurnovers('home', -1)">-</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="match-info">
+                <div id="venue-display" class="venue-name"></div>
+                <div id="date-display" class="match-date"></div>
+                <div class="period">
+                    <span>PÉRIODE</span>
+                    <div id="period-number">1</div>
+                    <button onclick="changePeriod(1)">+</button>
+                    <button onclick="changePeriod(-1)">-</button>
+                </div>
+                <div class="possession-indicator">
+                    <div class="possession-text">POSSESSION</div>
+                    <div class="possession-arrows">
+                        <div id="home-possession" class="possession-arrow">◀</div>
+                        <div id="visitor-possession" class="possession-arrow">▶</div>
+                    </div>
+                    <div class="possession-help">
+                        Touche 1: Domicile | Touche 2: Visiteur
+                    </div>
+                </div>
+                <div class="timer" id="timer">10:00</div>
+                <button id="timer-control" onclick="toggleTimer()">▶</button>
+            </div>
+
+            <div class="team team-visitor">
+                <img id="visitor-logo" class="team-logo" src="placeholder-logo.png" alt="Logo équipe visiteur">
+                <div class="team-info">
+                    <input type="text" id="visitor-name" class="team-name" readonly>
+                    <div class="team-abbrev" id="visitor-abbrev"></div>
+                </div>
+                <div class="score" id="visitor-score">0</div>
+                <div class="score-controls">
+                    <button onclick="updateScore('visitor', 1)">+1</button>
+                    <button onclick="updateScore('visitor', 2)">+2</button>
+                    <button onclick="updateScore('visitor', 3)">+3</button>
+                    <button onclick="updateScore('visitor', -1)">-1</button>
+                </div>
+                <div class="team-stats">
+                    <div class="shot-clock-container">
+                        <div class="shot-clock" id="visitor-shot-clock">24</div>
+                        <button onclick="toggleShotClock('visitor')" class="shot-clock-btn" id="visitor-shot-clock-btn">▶</button>
+                        <button onclick="resetShotClock('visitor')" class="shot-clock-reset">↺</button>
+                    </div>
+                    <div class="turnovers">
+                        <span>Ballons Perdus:</span>
+                        <div class="turnover-controls">
+                            <span id="visitor-turnovers">0</span>
+                            <button onclick="updateTurnovers('visitor', 1)">+</button>
+                            <button onclick="updateTurnovers('visitor', -1)">-</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="control-buttons">
+            <button onclick="resetMatch()" class="reset-button">Réinitialiser</button>
+            <button onclick="returnToSetup()" class="setup-button">Retour à la configuration</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
