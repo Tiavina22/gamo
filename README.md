@@ -93,7 +93,7 @@ GAMO est une application web moderne conçue pour la gestion professionnelle des
 MIT License - Libre d'utilisation et de modification
 
 ## Contact
-Pour toute question ou suggestion : [Votre Email]
+Pour toute question ou suggestion : tiavinaramilison22@gmail.com
 
 ---
 

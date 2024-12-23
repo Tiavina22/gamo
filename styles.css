@@ -696,17 +696,233 @@ body {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .setup-title {
+        font-size: 24px;
+    }
+
     .setup-teams {
         flex-direction: column;
+        gap: 20px;
+    }
+
+    .team-vs {
+        margin: 10px 0;
+    }
+
+    .setup-form {
+        padding: 20px;
+    }
+
+    .setup-progress {
+        margin-bottom: 30px;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .step-label {
+        font-size: 12px;
     }
 
     .team-logo {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
     }
 
     .score {
-        font-size: 72px;
+        font-size: 60px;
+        min-width: 120px;
+        padding: 5px 10px;
+    }
+
+    .score-controls {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        margin: 10px 0;
+    }
+
+    .score-controls button {
+        font-size: 16px;
+        padding: 8px;
+        margin: 0;
+    }
+
+    .timer {
+        font-size: 48px;
+        min-width: 150px;
+    }
+
+    #period-number {
+        font-size: 48px;
+    }
+
+    .shot-clock {
+        font-size: 36px;
+        min-width: 60px;
+    }
+
+    .team-name {
+        font-size: 20px;
+    }
+
+    .team-abbrev {
+        font-size: 24px;
+    }
+
+    .possession-arrows {
+        gap: 15px;
+    }
+
+    .possession-arrow {
+        font-size: 24px;
+    }
+
+    .control-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .control-buttons button {
+        width: 100%;
+    }
+}
+
+/* Styles pour très petits écrans */
+@media (max-width: 480px) {
+    .setup-match-info {
+        padding: 15px;
+    }
+
+    .time-settings {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .summary-teams {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .summary-match {
+        grid-template-columns: 1fr;
+    }
+
+    .score {
+        font-size: 48px;
+        min-width: 100px;
+    }
+
+    .timer {
+        font-size: 36px;
+        min-width: 120px;
+    }
+
+    .shot-clock {
+        font-size: 28px;
+        min-width: 50px;
+    }
+
+    .team-stats {
+        margin-top: 15px;
+        padding: 10px;
+    }
+
+    .turnover-controls {
+        gap: 5px;
+    }
+
+    .turnover-controls button {
+        padding: 5px;
+        font-size: 14px;
+    }
+
+    .possession-help {
+        font-size: 10px;
+    }
+}
+
+/* Ajustements pour l'orientation paysage sur mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .scoreboard {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .match-info {
+        order: -1;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .team {
+        flex: 0 0 calc(50% - 20px);
+    }
+
+    .team-logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    .score {
+        font-size: 42px;
+        min-width: 90px;
+    }
+
+    .setup-screen {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Ajustements pour éviter les problèmes de zoom sur mobile */
+@viewport {
+    width: device-width;
+    zoom: 1.0;
+}
+
+/* Désactiver le zoom sur les inputs pour iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    select,
+    textarea,
+    input {
+        font-size: 16px !important;
+    }
+}
+
+/* Améliorer la tactilité */
+button, 
+.score-controls button,
+.shot-clock-btn,
+.shot-clock-reset {
+    min-height: 44px; /* Taille minimale recommandée pour les éléments tactiles */
+    touch-action: manipulation; /* Optimisation pour le tactile */
+}
+
+/* Optimisation des performances */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Animation optimisée pour mobile */
+@media (max-width: 768px) {
+    .score {
+        animation: none; /* Désactiver l'animation de pulse sur mobile pour de meilleures performances */
+    }
+
+    .possession-arrow.active {
+        transform: scale(1.1); /* Réduire l'échelle de l'animation sur mobile */
     }
 }
 
