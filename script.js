@@ -172,16 +172,18 @@ function updateTimerDisplay() {
 
 function toggleTimer() {
     if (isTimerRunning) {
+        // Arrêter le chronomètre principal
         clearInterval(timerInterval);
         document.getElementById('timer-control').textContent = '▶';
         
-        // Mettre en pause le chronomètre de possession actif
+        // Arrêter le chronomètre de possession actif
         if (currentPossession) {
             clearInterval(shotClocks[currentPossession].interval);
             shotClocks[currentPossession].isRunning = false;
             document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
         }
     } else {
+        // Démarrer le chronomètre principal
         timerInterval = setInterval(() => {
             if (timeRemaining > 0) {
                 timeRemaining--;
@@ -205,9 +207,28 @@ function toggleTimer() {
         }, 1000);
         document.getElementById('timer-control').textContent = '⏸';
         
-        // Redémarrer le chronomètre de possession s'il était actif
+        // Redémarrer le chronomètre de possession s'il y en avait un actif
         if (currentPossession && shotClocks[currentPossession].time > 0) {
-            startShotClock(currentPossession);
+            clearInterval(shotClocks[currentPossession].interval); // Nettoyer l'ancien intervalle
+            shotClocks[currentPossession].interval = setInterval(() => {
+                if (shotClocks[currentPossession].time > 0) {
+                    shotClocks[currentPossession].time--;
+                    updateShotClockDisplay(currentPossession);
+                    saveMatchState();
+                    
+                    if (shotClocks[currentPossession].time <= 5) {
+                        document.getElementById(`${currentPossession}-shot-clock`).classList.add('warning');
+                    }
+                } else {
+                    clearInterval(shotClocks[currentPossession].interval);
+                    document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
+                    shotClocks[currentPossession].isRunning = false;
+                    playBuzzer();
+                    saveMatchState();
+                }
+            }, 1000);
+            shotClocks[currentPossession].isRunning = true;
+            document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '⏸';
         }
     }
     isTimerRunning = !isTimerRunning;
@@ -374,8 +395,12 @@ function toggleShotClock(team) {
 function startShotClock(team) {
     // Ne pas démarrer le chronomètre de possession si le chronomètre principal est arrêté
     if (!isTimerRunning) {
-        alert('Le chronomètre principal doit être en marche pour démarrer la possession');
         return;
+    }
+
+    // Nettoyer l'intervalle existant s'il y en a un
+    if (shotClocks[team].interval) {
+        clearInterval(shotClocks[team].interval);
     }
 
     shotClocks[team].interval = setInterval(() => {
@@ -394,12 +419,21 @@ function startShotClock(team) {
             
             playBuzzer();
 
+            // Changer automatiquement la possession et démarrer le chronomètre
             const otherTeam = team === 'home' ? 'visitor' : 'home';
             setPossession(otherTeam);
+            
+            // Démarrer automatiquement le chronomètre de l'autre équipe
+            if (isTimerRunning) {
+                startShotClock(otherTeam);
+                shotClocks[otherTeam].isRunning = true;
+                document.getElementById(`${otherTeam}-shot-clock-btn`).textContent = '⏸';
+            }
             
             saveMatchState();
         }
     }, 1000);
+    
     document.getElementById(`${team}-shot-clock-btn`).textContent = '⏸';
     shotClocks[team].isRunning = true;
     saveMatchState();
@@ -463,12 +497,15 @@ function setPossession(team) {
     saveMatchState();
 }
 
-// Ajouter l'écouteur d'événements pour les touches
+// Modifier l'écouteur d'événements pour les touches
 document.addEventListener('keydown', (e) => {
     if (e.key === '1') {
         setPossession('home');
     } else if (e.key === '2') {
         setPossession('visitor');
+    } else if (e.key === ' ' || e.code === 'Space') { // Ajouter la gestion de la touche espace
+        e.preventDefault(); // Empêcher le défilement de la page
+        toggleTimer();
     }
 });
 
