@@ -282,6 +282,10 @@ function saveMatchState() {
 
 // Charger l'état du match au démarrage
 document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const formattedDate = today.toISOString().slice(0, 16);
+    document.getElementById('setup-date').setAttribute('min', formattedDate);
+
     const savedState = localStorage.getItem('basketballMatch');
     if (savedState) {
         const state = JSON.parse(savedState);
