@@ -89,11 +89,10 @@ function startMatch(skipValidation = false) {
         matchConfig.teams.visitor.name = document.getElementById('setup-visitor-name').value;
         matchConfig.teams.visitor.abbrev = document.getElementById('setup-visitor-abbrev').value;
         matchConfig.date = document.getElementById('setup-date').value;
+        
+        // Initialiser le temps seulement pour un nouveau match
+        timeRemaining = matchConfig.quarterDuration * 60;
     }
-
-    // Initialiser le match
-    timeRemaining = matchConfig.quarterDuration * 60;
-    updateTimerDisplay();
 
     // Appliquer la configuration à l'écran du match
     document.getElementById('home-logo').src = matchConfig.teams.home.logo;
@@ -103,6 +102,7 @@ function startMatch(skipValidation = false) {
     document.getElementById('home-abbrev').textContent = matchConfig.teams.home.abbrev;
     document.getElementById('visitor-abbrev').textContent = matchConfig.teams.visitor.abbrev;
     document.getElementById('venue-display').textContent = matchConfig.venue;
+    
     if (matchConfig.date) {
         const dateObj = new Date(matchConfig.date);
         const formattedDate = dateObj.toLocaleString('fr-FR', {
@@ -125,8 +125,10 @@ function startMatch(skipValidation = false) {
         matchConfig.shotClockDuration = parseInt(document.getElementById('setup-shot-clock').value);
         shotClocks.home.time = matchConfig.shotClockDuration;
         shotClocks.visitor.time = matchConfig.shotClockDuration;
-        updateShotClockDisplays();
     }
+    
+    updateTimerDisplay();
+    updateShotClockDisplays();
 
     // Initialiser les compteurs de ballons perdus
     document.getElementById('home-turnovers').textContent = matchConfig.teams.home.turnovers;
@@ -199,55 +201,40 @@ function toggleTimer() {
         }
     } else {
         // Démarrer le chronomètre principal
-        timerInterval = setInterval(() => {
-            if (timeRemaining > 0) {
-                timeRemaining--;
-                updateTimerDisplay();
-                saveMatchState();
-            } else {
-                clearInterval(timerInterval);
-                alert('Fin du quart-temps !');
-                document.getElementById('timer-control').textContent = '▶';
-                isTimerRunning = false;
-
-                // Arrêter aussi le chronomètre de possession
-                if (currentPossession) {
-                    clearInterval(shotClocks[currentPossession].interval);
-                    shotClocks[currentPossession].isRunning = false;
-                    document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
-                }
-
-                saveMatchState();
-            }
-        }, 1000);
-        document.getElementById('timer-control').textContent = '⏸';
+        startMainTimer();
         
-        // Redémarrer le chronomètre de possession s'il y en avait un actif
+        // Redémarrer le chronomètre de possession s'il était actif
         if (currentPossession && shotClocks[currentPossession].time > 0) {
-            clearInterval(shotClocks[currentPossession].interval); // Nettoyer l'ancien intervalle
-            shotClocks[currentPossession].interval = setInterval(() => {
-                if (shotClocks[currentPossession].time > 0) {
-                    shotClocks[currentPossession].time--;
-                    updateShotClockDisplay(currentPossession);
-                    saveMatchState();
-                    
-                    if (shotClocks[currentPossession].time <= 5) {
-                        document.getElementById(`${currentPossession}-shot-clock`).classList.add('warning');
-                    }
-                } else {
-                    clearInterval(shotClocks[currentPossession].interval);
-                    document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
-                    shotClocks[currentPossession].isRunning = false;
-                    playBuzzer();
-                    saveMatchState();
-                }
-            }, 1000);
-            shotClocks[currentPossession].isRunning = true;
-            document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '⏸';
+            startShotClock(currentPossession);
         }
     }
     isTimerRunning = !isTimerRunning;
     saveMatchState();
+}
+
+function startMainTimer() {
+    timerInterval = setInterval(() => {
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            updateTimerDisplay();
+            saveMatchState();
+        } else {
+            clearInterval(timerInterval);
+            alert('Fin du quart-temps !');
+            document.getElementById('timer-control').textContent = '▶';
+            isTimerRunning = false;
+
+            // Arrêter aussi le chronomètre de possession
+            if (currentPossession) {
+                clearInterval(shotClocks[currentPossession].interval);
+                shotClocks[currentPossession].isRunning = false;
+                document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
+            }
+
+            saveMatchState();
+        }
+    }, 1000);
+    document.getElementById('timer-control').textContent = '⏸';
 }
 
 function resetMatch() {
@@ -332,14 +319,16 @@ document.addEventListener('DOMContentLoaded', () => {
         period = state.period;
         timeRemaining = state.timeRemaining;
         isTimerRunning = state.isTimerRunning;
+        currentPossession = state.possession;
 
         // Restaurer les chronomètres de possession
         if (state.shotClocks) {
             shotClocks.home.time = state.shotClocks.home.time;
+            shotClocks.home.isRunning = state.shotClocks.home.isRunning;
             shotClocks.visitor.time = state.shotClocks.visitor.time;
+            shotClocks.visitor.isRunning = state.shotClocks.visitor.isRunning;
         }
 
-        // Passer directement à l'écran du match avec skipValidation = true
         startMatch(true);
 
         // Mettre à jour tous les affichages
@@ -350,40 +339,26 @@ document.addEventListener('DOMContentLoaded', () => {
         updateShotClockDisplays();
 
         // Restaurer la possession
-        if (state.possession) {
-            currentPossession = state.possession;
-            document.getElementById(`${state.possession}-possession`).classList.add('active');
+        if (currentPossession) {
+            document.getElementById(`${currentPossession}-possession`).classList.add('active');
         }
 
-        // Redémarrer les chronomètres qui étaient en cours
-        if (state.shotClocks.home.isRunning) {
-            startShotClock('home');
-        }
-        if (state.shotClocks.visitor.isRunning) {
-            startShotClock('visitor');
-        }
-
-        // Restaurer le chronomètre principal
-        if (state.isTimerRunning) {
-            setTimeout(() => {
-                toggleTimer();
-            }, 500);
-        }
-
-        // Restaurer les états des boutons
-        if (shotClocks.home.isRunning) {
-            document.getElementById('home-shot-clock-btn').textContent = '⏸';
-        }
-        if (shotClocks.visitor.isRunning) {
-            document.getElementById('visitor-shot-clock-btn').textContent = '⏸';
-        }
+        // Redémarrer les chronomètres si ils étaient en cours
         if (isTimerRunning) {
-            document.getElementById('timer-control').textContent = '⏸';
+            startMainTimer();
+            if (currentPossession && shotClocks[currentPossession].isRunning) {
+                startShotClock(currentPossession);
+            }
         }
-    }
 
-    // Si pas d'état sauvegardé, initialiser la date à maintenant
-    if (!localStorage.getItem('basketballMatch')) {
+        // Mettre à jour l'affichage des boutons
+        document.getElementById('timer-control').textContent = isTimerRunning ? '⏸' : '▶';
+        if (currentPossession) {
+            document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = 
+                shotClocks[currentPossession].isRunning ? '⏸' : '▶';
+        }
+    } else {
+        // Si pas d'état sauvegardé, initialiser la date à maintenant
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('setup-date').value = now.toISOString().slice(0, 16);
