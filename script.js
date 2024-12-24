@@ -167,13 +167,15 @@ function changePeriod(change) {
     document.getElementById('period-number').textContent = period;
     timeRemaining = matchConfig.quarterDuration * 60;
     updateTimerDisplay();
-    saveMatchState();
-
+    
+    // Ajouter l'animation
     const periodElement = document.querySelector('.period');
     periodElement.classList.add('changing');
     setTimeout(() => {
         periodElement.classList.remove('changing');
     }, 300);
+    
+    saveMatchState();
 }
 
 function updateTimerDisplay() {
@@ -629,15 +631,4 @@ function updateSummary() {
         });
         document.getElementById('summary-date').textContent = formattedDate;
     }
-}
-
-// Ajouter pour le changement de période
-function changePeriod(change) {
-    // Code existant...
-    
-    const periodElement = document.querySelector('.period');
-    periodElement.classList.add('changing');
-    setTimeout(() => {
-        periodElement.classList.remove('changing');
-    }, 300);
 }
