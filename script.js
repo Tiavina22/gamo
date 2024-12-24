@@ -43,6 +43,9 @@ let shotClocks = {
 };
 let currentPossession = null; // 'home' ou 'visitor'
 
+// Ajouter une variable pour suivre l'étape courante
+let currentSetupStep = 1;
+
 // Fonctions de configuration
 function setupChangeLogo(team) {
     const input = document.createElement('input');
@@ -298,7 +301,24 @@ function saveMatchState() {
             }
         },
         possession: currentPossession,
-        isTimerRunning: isTimerRunning
+        isTimerRunning: isTimerRunning,
+        setupStep: currentSetupStep,
+        setupData: {
+            home: {
+                name: document.getElementById('setup-home-name').value,
+                abbrev: document.getElementById('setup-home-abbrev').value,
+                logo: document.getElementById('setup-home-logo').src
+            },
+            visitor: {
+                name: document.getElementById('setup-visitor-name').value,
+                abbrev: document.getElementById('setup-visitor-abbrev').value,
+                logo: document.getElementById('setup-visitor-logo').src
+            },
+            venue: document.getElementById('setup-venue').value,
+            date: document.getElementById('setup-date').value,
+            quarterDuration: document.getElementById('setup-quarter-duration').value,
+            shotClock: document.getElementById('setup-shot-clock').value
+        }
     };
     localStorage.setItem('basketballMatch', JSON.stringify(matchState));
 }
@@ -313,49 +333,78 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedState) {
         const state = JSON.parse(savedState);
 
-        // Restaurer la configuration et les scores
-        matchConfig = state.config;
-        scores = state.scores;
-        period = state.period;
-        timeRemaining = state.timeRemaining;
-        isTimerRunning = state.isTimerRunning;
-        currentPossession = state.possession;
+        // Si le match n'a pas encore commencé et qu'il y a des données de configuration
+        if (state.setupData && !state.isTimerRunning) {
+            // Restaurer les données de configuration
+            document.getElementById('setup-home-name').value = state.setupData.home.name;
+            document.getElementById('setup-home-abbrev').value = state.setupData.home.abbrev;
+            document.getElementById('setup-home-logo').src = state.setupData.home.logo;
+            
+            document.getElementById('setup-visitor-name').value = state.setupData.visitor.name;
+            document.getElementById('setup-visitor-abbrev').value = state.setupData.visitor.abbrev;
+            document.getElementById('setup-visitor-logo').src = state.setupData.visitor.logo;
+            
+            document.getElementById('setup-venue').value = state.setupData.venue;
+            document.getElementById('setup-date').value = state.setupData.date;
+            document.getElementById('setup-quarter-duration').value = state.setupData.quarterDuration;
+            document.getElementById('setup-shot-clock').value = state.setupData.shotClock;
 
-        // Restaurer les chronomètres de possession
-        if (state.shotClocks) {
-            shotClocks.home.time = state.shotClocks.home.time;
-            shotClocks.home.isRunning = state.shotClocks.home.isRunning;
-            shotClocks.visitor.time = state.shotClocks.visitor.time;
-            shotClocks.visitor.isRunning = state.shotClocks.visitor.isRunning;
-        }
+            // Restaurer l'étape courante
+            document.querySelectorAll('.setup-step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            document.getElementById(`step-${state.setupStep}`).classList.remove('hidden');
+            updateProgress(state.setupStep);
+            currentSetupStep = state.setupStep;
 
-        startMatch(true);
-
-        // Mettre à jour tous les affichages
-        document.getElementById('home-score').textContent = scores.home;
-        document.getElementById('visitor-score').textContent = scores.visitor;
-        document.getElementById('period-number').textContent = period;
-        updateTimerDisplay();
-        updateShotClockDisplays();
-
-        // Restaurer la possession
-        if (currentPossession) {
-            document.getElementById(`${currentPossession}-possession`).classList.add('active');
-        }
-
-        // Redémarrer les chronomètres si ils étaient en cours
-        if (isTimerRunning) {
-            startMainTimer();
-            if (currentPossession && shotClocks[currentPossession].isRunning) {
-                startShotClock(currentPossession);
+            if (state.setupStep === 3) {
+                updateSummary();
             }
-        }
+        } else {
+            // Restaurer la configuration et les scores
+            matchConfig = state.config;
+            scores = state.scores;
+            period = state.period;
+            timeRemaining = state.timeRemaining;
+            isTimerRunning = state.isTimerRunning;
+            currentPossession = state.possession;
 
-        // Mettre à jour l'affichage des boutons
-        document.getElementById('timer-control').textContent = isTimerRunning ? '⏸' : '▶';
-        if (currentPossession) {
-            document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = 
-                shotClocks[currentPossession].isRunning ? '⏸' : '▶';
+            // Restaurer les chronomètres de possession
+            if (state.shotClocks) {
+                shotClocks.home.time = state.shotClocks.home.time;
+                shotClocks.home.isRunning = state.shotClocks.home.isRunning;
+                shotClocks.visitor.time = state.shotClocks.visitor.time;
+                shotClocks.visitor.isRunning = state.shotClocks.visitor.isRunning;
+            }
+
+            startMatch(true);
+
+            // Mettre à jour tous les affichages
+            document.getElementById('home-score').textContent = scores.home;
+            document.getElementById('visitor-score').textContent = scores.visitor;
+            document.getElementById('period-number').textContent = period;
+            updateTimerDisplay();
+            updateShotClockDisplays();
+
+            // Restaurer la possession
+            if (currentPossession) {
+                document.getElementById(`${currentPossession}-possession`).classList.add('active');
+            }
+
+            // Redémarrer les chronomètres si ils étaient en cours
+            if (isTimerRunning) {
+                startMainTimer();
+                if (currentPossession && shotClocks[currentPossession].isRunning) {
+                    startShotClock(currentPossession);
+                }
+            }
+
+            // Mettre à jour l'affichage des boutons
+            document.getElementById('timer-control').textContent = isTimerRunning ? '⏸' : '▶';
+            if (currentPossession) {
+                document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = 
+                    shotClocks[currentPossession].isRunning ? '⏸' : '▶';
+            }
         }
     } else {
         // Si pas d'état sauvegardé, initialiser la date à maintenant
@@ -504,21 +553,25 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Ajouter ces fonctions pour la navigation entre les étapes
-function nextStep(currentStep) {
-    if (validateStep(currentStep)) {
-        document.getElementById(`step-${currentStep}`).classList.add('hidden');
-        document.getElementById(`step-${currentStep + 1}`).classList.remove('hidden');
-        updateProgress(currentStep + 1);
-        if (currentStep === 2) {
+function nextStep(step) {
+    if (validateStep(step)) {
+        document.getElementById(`step-${step}`).classList.add('hidden');
+        document.getElementById(`step-${step + 1}`).classList.remove('hidden');
+        updateProgress(step + 1);
+        currentSetupStep = step + 1;
+        if (step === 2) {
             updateSummary();
         }
+        saveMatchState();
     }
 }
 
-function prevStep(currentStep) {
-    document.getElementById(`step-${currentStep}`).classList.add('hidden');
-    document.getElementById(`step-${currentStep - 1}`).classList.remove('hidden');
-    updateProgress(currentStep - 1);
+function prevStep(step) {
+    document.getElementById(`step-${step}`).classList.add('hidden');
+    document.getElementById(`step-${step - 1}`).classList.remove('hidden');
+    updateProgress(step - 1);
+    currentSetupStep = step - 1;
+    saveMatchState();
 }
 
 function updateProgress(step) {
