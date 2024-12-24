@@ -86,7 +86,18 @@ GAMO est une application web de score boarding basketball.
 - Edge
 
 ## Auteurs et Contribution
-- Tiavina22
+- Collaborateurs (Now)
+
+<div style="display: flex; gap: 20px;">
+  <a href="https://github.com/Tiavina22">
+    <img src="https://avatars.githubusercontent.com/u/80424305?s=96&v=4" alt="Tiavina22" style="border-radius: 50%; width: 100px; height: 100px;"/>
+  </a>
+
+  <a href="https://github.com/Rohan29-AN">
+    <img src="https://avatars.githubusercontent.com/u/67300916?v=4" alt="Rohan29-AN" style="border-radius: 50%; width: 100px; height: 100px;"/>
+  </a>
+</div>
+
 - Contributions bienvenues via Pull Requests
 
 ## Licence
