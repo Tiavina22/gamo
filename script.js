@@ -127,7 +127,7 @@ function startMatch(skipValidation = false) {
         shotClocks.visitor.time = matchConfig.shotClockDuration;
         updateShotClockDisplays();
     }
-    
+
     // Initialiser les compteurs de ballons perdus
     document.getElementById('home-turnovers').textContent = matchConfig.teams.home.turnovers;
     document.getElementById('visitor-turnovers').textContent = matchConfig.teams.visitor.turnovers;
@@ -143,13 +143,13 @@ function updateScore(team, points) {
     scores[team] += points;
     if (scores[team] < 0) scores[team] = 0;
     document.getElementById(`${team}-score`).textContent = scores[team];
-    
+
     // Changer automatiquement la possession après un panier
     if (points > 0) { // Seulement si c'est un panier marqué (pas pour -1)
         const newPossession = team === 'home' ? 'visitor' : 'home';
         setPossession(newPossession);
     }
-    
+
     saveMatchState();
 }
 
@@ -166,7 +166,7 @@ function changePeriod(change) {
 function updateTimerDisplay() {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
-    document.getElementById('timer').textContent = 
+    document.getElementById('timer').textContent =
         `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
@@ -174,7 +174,7 @@ function toggleTimer() {
     if (isTimerRunning) {
         clearInterval(timerInterval);
         document.getElementById('timer-control').textContent = '▶';
-        
+
         // Mettre en pause le chronomètre de possession actif
         if (currentPossession) {
             clearInterval(shotClocks[currentPossession].interval);
@@ -192,19 +192,19 @@ function toggleTimer() {
                 alert('Fin du quart-temps !');
                 document.getElementById('timer-control').textContent = '▶';
                 isTimerRunning = false;
-                
+
                 // Arrêter aussi le chronomètre de possession
                 if (currentPossession) {
                     clearInterval(shotClocks[currentPossession].interval);
                     shotClocks[currentPossession].isRunning = false;
                     document.getElementById(`${currentPossession}-shot-clock-btn`).textContent = '▶';
                 }
-                
+
                 saveMatchState();
             }
         }, 1000);
         document.getElementById('timer-control').textContent = '⏸';
-        
+
         // Redémarrer le chronomètre de possession s'il était actif
         if (currentPossession && shotClocks[currentPossession].time > 0) {
             startShotClock(currentPossession);
@@ -221,13 +221,13 @@ function resetMatch() {
         timeRemaining = matchConfig.quarterDuration * 60;
         isTimerRunning = false;
         clearInterval(timerInterval);
-        
+
         document.getElementById('home-score').textContent = '0';
         document.getElementById('visitor-score').textContent = '0';
         document.getElementById('period-number').textContent = '1';
         document.getElementById('timer-control').textContent = '▶';
         updateTimerDisplay();
-        
+
         // Réinitialiser les chronomètres de possession
         Object.keys(shotClocks).forEach(team => {
             clearInterval(shotClocks[team].interval);
@@ -237,16 +237,16 @@ function resetMatch() {
             document.getElementById(`${team}-shot-clock`).classList.remove('warning');
             updateShotClockDisplay(team);
         });
-        
+
         // Réinitialiser les ballons perdus
         matchConfig.teams.home.turnovers = 0;
         matchConfig.teams.visitor.turnovers = 0;
         document.getElementById('home-turnovers').textContent = '0';
         document.getElementById('visitor-turnovers').textContent = '0';
-        
+
         // Réinitialiser la possession
         setPossession(null);
-        
+
         saveMatchState();
     }
 }
@@ -282,23 +282,27 @@ function saveMatchState() {
 
 // Charger l'état du match au démarrage
 document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const formattedDate = today.toISOString().slice(0, 16);
+    document.getElementById('setup-date').setAttribute('min', formattedDate);
+
     const savedState = localStorage.getItem('basketballMatch');
     if (savedState) {
         const state = JSON.parse(savedState);
-        
+
         // Restaurer la configuration et les scores
         matchConfig = state.config;
         scores = state.scores;
         period = state.period;
         timeRemaining = state.timeRemaining;
         isTimerRunning = state.isTimerRunning;
-        
+
         // Restaurer les chronomètres de possession
         if (state.shotClocks) {
             shotClocks.home.time = state.shotClocks.home.time;
             shotClocks.visitor.time = state.shotClocks.visitor.time;
         }
-        
+
         // Passer directement à l'écran du match avec skipValidation = true
         startMatch(true);
 
@@ -308,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('period-number').textContent = period;
         updateTimerDisplay();
         updateShotClockDisplays();
-        
+
         // Restaurer la possession
         if (state.possession) {
             currentPossession = state.possession;
@@ -329,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleTimer();
             }, 500);
         }
-        
+
         // Restaurer les états des boutons
         if (shotClocks.home.isRunning) {
             document.getElementById('home-shot-clock-btn').textContent = '⏸';
@@ -341,14 +345,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('timer-control').textContent = '⏸';
         }
     }
-    
+
     // Si pas d'état sauvegardé, initialiser la date à maintenant
     if (!localStorage.getItem('basketballMatch')) {
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('setup-date').value = now.toISOString().slice(0, 16);
     }
-}); 
+});
 
 function toggleShotClock(team) {
     // Si on démarre un chronomètre, arrêter l'autre s'il est en cours
@@ -383,7 +387,7 @@ function startShotClock(team) {
             shotClocks[team].time--;
             updateShotClockDisplay(team);
             saveMatchState();
-            
+
             if (shotClocks[team].time <= 5) {
                 document.getElementById(`${team}-shot-clock`).classList.add('warning');
             }
@@ -391,12 +395,12 @@ function startShotClock(team) {
             clearInterval(shotClocks[team].interval);
             document.getElementById(`${team}-shot-clock-btn`).textContent = '▶';
             shotClocks[team].isRunning = false;
-            
+
             playBuzzer();
 
             const otherTeam = team === 'home' ? 'visitor' : 'home';
             setPossession(otherTeam);
-            
+
             saveMatchState();
         }
     }, 1000);
@@ -447,10 +451,10 @@ function setPossession(team) {
     // Mettre à jour l'indicateur visuel
     document.getElementById('home-possession').classList.remove('active');
     document.getElementById('visitor-possession').classList.remove('active');
-    
+
     if (team) {
         document.getElementById(`${team}-possession`).classList.add('active');
-        
+
         // Réinitialiser et démarrer le chronomètre de possession seulement si le chronomètre principal est en marche
         resetShotClock(team);
         if (isTimerRunning) {
@@ -496,28 +500,52 @@ function updateProgress(step) {
 }
 
 function validateStep(step) {
-    switch(step) {
+    switch (step) {
         case 1:
             const homeName = document.getElementById('setup-home-name').value;
             const homeAbbrev = document.getElementById('setup-home-abbrev').value;
             const visitorName = document.getElementById('setup-visitor-name').value;
             const visitorAbbrev = document.getElementById('setup-visitor-abbrev').value;
-            
+
             if (!homeName || !homeAbbrev || !visitorName || !visitorAbbrev) {
                 alert('Veuillez remplir tous les champs des équipes');
                 return false;
             }
+
+            //Check if the names of the registered teams are different
+            if (homeName.toLowerCase() == visitorName.toLowerCase()) {
+                alert("Les noms des équipes ne peuvent pas être identiques.");
+                return false;
+            }
+
+            //Check if the abbreavition of the registered teams are different
+            if (homeAbbrev.toLowerCase() == visitorName.toLowerCase()) {
+                alert("Les abreavions des noms des équipes ne peuvent pas être identiques.");
+                return false;
+            }
+
+
             return true;
-            
+
         case 2:
             const venue = document.getElementById('setup-venue').value;
             const date = document.getElementById('setup-date').value;
+            console.log(date)
+            const givenDate = new Date(date).toISOString().split('T')[0];
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            if (givenDate < currentDate) {
+                alert("Veuillez choisir une date égale ou supérieure à la date d'aujourd'hui.");
+                return false;
+            }
+
+            console.log("Date", date)
             if (!venue || !date) {
                 alert('Veuillez remplir tous les champs (stade et date)');
                 return false;
             }
             return true;
-            
+
         default:
             return true;
     }
@@ -532,11 +560,11 @@ function updateSummary() {
     document.getElementById('summary-venue').textContent = document.getElementById('setup-venue').value;
     document.getElementById('summary-quarter').textContent = document.getElementById('setup-quarter-duration').value;
     document.getElementById('summary-shot-clock').textContent = document.getElementById('setup-shot-clock').value;
-    
+
     // Mettre à jour les logos
     document.getElementById('summary-home-logo').src = document.getElementById('setup-home-logo').src;
     document.getElementById('summary-visitor-logo').src = document.getElementById('setup-visitor-logo').src;
-    
+
     // Formater et afficher la date dans le résumé
     const dateValue = document.getElementById('setup-date').value;
     if (dateValue) {
