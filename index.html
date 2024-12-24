@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E7TL5LLW6C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-E7TL5LLW6C');
+</script>
 <body>
     <!-- Écran de configuration -->
     <div id="setup-screen" class="setup-screen">
@@ -33,7 +42,7 @@
                     <div class="setup-team">
                         <h2>Équipe Domicile</h2>
                         <div class="logo-upload">
-                            <img id="setup-home-logo" src="placeholder-logo.png" alt="Logo équipe domicile">
+                            <img id="setup-home-logo" src="./assets/logo_placeholder.png" alt="Logo équipe domicile">
                             <button class="upload-btn" onclick="setupChangeLogo('home')">
                                 <i class="fas fa-upload"></i> Choisir Logo
                             </button>
@@ -44,7 +53,7 @@
                         </div>
                         <div class="input-group">
                             <label for="setup-home-abbrev">Abréviation</label>
-                            <input type="text" id="setup-home-abbrev" placeholder="LAL" maxlength="3">
+                            <input type="text" id="setup-home-abbrev" placeholder="LAL" maxlength="3" title="L'abbréviation doit comporter au maximum 3 caractères">
                         </div>
                     </div>
 
@@ -53,7 +62,7 @@
                     <div class="setup-team">
                         <h2>Équipe Visiteur</h2>
                         <div class="logo-upload">
-                            <img id="setup-visitor-logo" src="placeholder-logo.png" alt="Logo équipe visiteur">
+                            <img id="setup-visitor-logo" src="./assets/logo_placeholder.png" alt="Logo équipe visiteur">
                             <button class="upload-btn" onclick="setupChangeLogo('visitor')">
                                 <i class="fas fa-upload"></i> Choisir Logo
                             </button>
@@ -64,7 +73,7 @@
                         </div>
                         <div class="input-group">
                             <label for="setup-visitor-abbrev">Abréviation</label>
-                            <input type="text" id="setup-visitor-abbrev" placeholder="BOS" maxlength="3">
+                            <input type="text" id="setup-visitor-abbrev" placeholder="BOS" maxlength="3" title="L'abbréviation doit comporter au maximum 3 caractères">
                         </div>
                     </div>
                 </div>
@@ -118,8 +127,12 @@
                     </div>
                 </div>
                 <div class="setup-nav">
-                    <button class="back-btn" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Retour</button>
-                    <button class="next-btn" onclick="nextStep(2)">Suivant <i class="fas fa-arrow-right"></i></button>
+                    <button class="back-btn" onclick="prevStep(2)" style="animation: slideInLeft 0.3s ease;">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <button class="next-btn" onclick="nextStep(2)" style="animation: slideInRight 0.3s ease;">
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
 

@@ -1,7 +1,7 @@
 # GAMO - Gestionnaire Score Boarding Basketball 🏀
 
 ## Description
-GAMO est une application web moderne conçue pour la gestion professionnelle des matchs de basketball. Elle offre une interface intuitive et complète pour suivre en temps réel tous les aspects d'un match de basketball.
+GAMO est une application web de score boarding basketball.
 
 ## Fonctionnalités Principales
 
@@ -86,7 +86,7 @@ GAMO est une application web moderne conçue pour la gestion professionnelle des
 - Edge
 
 ## Auteurs et Contribution
-- Développé par [Votre Nom]
+- Tiavina22
 - Contributions bienvenues via Pull Requests
 
 ## Licence
@@ -97,4 +97,4 @@ Pour toute question ou suggestion : tiavinaramilison22@gmail.com
 
 ---
 
-© 2024 GAMO - Tous droits réservés 
+© 2024 GAMO
