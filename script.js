@@ -85,7 +85,7 @@ function startMatch(skipValidation = false) {
 
     // Sauvegarder la configuration seulement si ce n'est pas un rechargement
     if (!skipValidation) {
-        matchConfig.quarterDuration = parseInt(document.getElementById('setup-quarter-duration').value);
+        matchConfig.quarterDuration = parseInt(document.getElementById('setup-quarter-duration').value) || 10;
         matchConfig.venue = document.getElementById('setup-venue').value;
         matchConfig.teams.home.name = document.getElementById('setup-home-name').value;
         matchConfig.teams.home.abbrev = document.getElementById('setup-home-abbrev').value;
@@ -555,6 +555,11 @@ document.addEventListener('keydown', (e) => {
 // Ajouter ces fonctions pour la navigation entre les étapes
 function nextStep(step) {
     if (validateStep(step)) {
+        // Initialiser timeRemaining quand on passe à l'étape suivante
+        if (step === 2) {
+            const quarterDuration = parseInt(document.getElementById('setup-quarter-duration').value) || 10;
+            timeRemaining = quarterDuration * 60;
+        }
         document.getElementById(`step-${step}`).classList.add('hidden');
         document.getElementById(`step-${step + 1}`).classList.remove('hidden');
         updateProgress(step + 1);
